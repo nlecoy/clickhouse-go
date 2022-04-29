@@ -127,7 +127,13 @@ func (b *batch) Column(idx int) driver.BatchColumn {
 
 func (b *batch) Send() (err error) {
 	defer func() {
-		b.sent = true
+		switch {
+		case err != nil:
+			b.sent = false
+		default:
+			b.sent = true
+
+		}
 		b.release(err)
 	}()
 	if b.sent {
